@@ -11,9 +11,9 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-#define SERVERIP "192.168.43.20"
+#define SERVERIP "127.0.0.1"
 
-#define SERVERPORT 12345
+#define SERVERPORT 9999
 #define MAXBUFFER 256
 
 int main(int argc, char** argv)
