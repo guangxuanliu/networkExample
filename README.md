@@ -1,7 +1,8 @@
 # networkExample
-1. server.cpp为阻塞的方式
-2. selectServer.cpp为用select的方式
-3. libeventServer.cpp为用libevent的方式
+1. `simpleServer.cpp`为阻塞的方式
+2. `selectServer.cpp`为用`select`的方式
+3. `epollServer.cpp`为用`epoll`的方式
+4. `libeventServer.cpp`为用`libevent`的方式
 
 
 
