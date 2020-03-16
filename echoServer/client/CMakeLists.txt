@@ -1,2 +1,3 @@
-aux_source_directory(. SRCS)
-add_executable(client ${SRCS})
+#add_executable(simpleClient.cpp)
+
+add_executable(client epollClient.cpp)

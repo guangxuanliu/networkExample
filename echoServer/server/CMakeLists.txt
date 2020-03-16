@@ -3,7 +3,11 @@
 
 #add_executable(server selectServer.cpp)
 
+#add_executable(server libeventServer.cpp)
+#target_link_libraries(server event)
 
-add_executable(server libeventServer.cpp)
+#add_executable(server epollServer.cpp)
 
+add_executable(server libeventTest.cpp)
 target_link_libraries(server event)
+
