@@ -15,6 +15,10 @@
 
 1. 更成熟、稳定，有较成熟的产品在用。如`chromium`，`memcached`。[出处1](https://www.zhihu.com/question/20278441/answer/20226308)、[出处2](http://libevent.org/)
 
+### 设置libevent使用某种方法
+
+`event_config_avoid_method()`：通过设置避免某种方法来使用其他的方法。
+
 ### 注意：
 
 1. 修改Linux下的最大打开文件个数
