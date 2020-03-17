@@ -8,6 +8,6 @@
 
 #add_executable(server epollServer.cpp)
 
-add_executable(server libeventTest.cpp)
-target_link_libraries(server event)
+add_executable(server libevent/advanced.cpp)
+target_link_libraries(server event pthread event_pthreads)
 

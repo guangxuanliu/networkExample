@@ -42,7 +42,7 @@ void checkEventBase()
 
     f = event_base_get_features(base);
     printf("%d",f);
-
+    event_config_free(config);
 }
 
 void getVersionAndSupportedMethod()
