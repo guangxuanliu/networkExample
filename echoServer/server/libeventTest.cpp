@@ -6,9 +6,12 @@
 using namespace std;
 
 void checkEventBase();
+void getVersionAndSupportedMethod();
 
 int main()
 {
+
+//    getVersionAndSupportedMethod();
     checkEventBase();
 
 
@@ -18,9 +21,15 @@ int main()
 void checkEventBase()
 {
     struct event_base *base;
+    struct event_config *config;
     int f;
 
-    base = event_base_new();
+    config = event_config_new();
+
+    event_config_avoid_method(config,"epoll");
+    event_config_avoid_method(config,"poll");
+
+    base = event_base_new_with_config(config);
     if(!base)
     {
         puts("Couldn't get an event_base!\n");
@@ -33,8 +42,6 @@ void checkEventBase()
 
     f = event_base_get_features(base);
     printf("%d",f);
-
-
 
 }
 
