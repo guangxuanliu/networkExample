@@ -17,7 +17,7 @@
 
 ### 设置libevent使用某种方法
 
-`event_config_avoid_method()`：通过设置避免某种方法来使用其他的方法。
+[event_config_avoid_method()](https://github.com/guangxuanliu/networkExample/blob/6bdfd5ea5ec3e8e2aac89b329859a4ef887430d2/echoServer/server/libeventTest.cpp#L29)：通过设置避免某种方法来使用其他的方法。
 
 ### 注意：
 
