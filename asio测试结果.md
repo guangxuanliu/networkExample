@@ -1,5 +1,3 @@
-[toc]
-
 ### 测试环境
 
 1. asio版本：1.12.2
@@ -43,9 +41,9 @@
 
 **入口流量**：`nload -m lo`
 
-**陈硕计算方法：**入口流量换算成MB，然后再除以2。
+**陈硕计算方法**：入口流量换算成MB，然后再除以2。
 
-测试参考连接：
+**测试参考连接**：
 
 1. [muduo 与 boost asio 吞吐量对比](https://blog.csdn.net/Solstice/article/details/5863411)
 2. [muduo 与 libevent2 吞吐量对比](https://blog.csdn.net/Solstice/article/details/5864889)
