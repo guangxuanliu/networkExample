@@ -18,6 +18,10 @@
 #include "handler_allocator.hpp"
 #include <chrono>
 
+//10G
+//const size_t sz=10*1024*1024*1024L;
+
+//30G
 const size_t sz=30*1024*1024*1024L;
 
 std::string nowTime() {
