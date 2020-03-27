@@ -17,19 +17,8 @@
 #include <string>
 #include "handler_allocator.hpp"
 #include <chrono>
+#include "../protocal.h"
 
-//10G
-//const size_t sz=10*1024*1024*1024L;
-
-//30G
-const size_t sz=30*1024*1024*1024L;
-
-std::string nowTime() {
-    time_t t = time(0);
-    char buffer[9] = {0};
-    strftime(buffer, 9,"%H:%M:%S", localtime(&t));
-    return std::string(buffer);
-}
 
 class stats {
 public:
@@ -70,8 +59,9 @@ public:
               bytes_written_(0),
               bytes_read_(0),
               stats_(s) {
-        for (size_t i = 0; i < block_size_; ++i)
-            write_data_[i] = static_cast<char>(i % 128);
+//        for (size_t i = 0; i < block_size_; ++i)
+//            write_data_[i] = static_cast<char>(i % 128);
+        memset(write_data_, 0, block_size_);
     }
 
     ~session() {
@@ -79,6 +69,56 @@ public:
 
         delete[] read_data_;
         delete[] write_data_;
+    }
+
+    void serialization() {
+
+        memset(write_data_,0,block_size_);
+
+        //消息头;
+        SOCKET_MESSAGE_HEADER header;
+        memset(&header, 0, sizeof(header));
+
+        //消息体;
+        DateStruct::DS_STATE sendMsg;
+        memset(&sendMsg, 0, sizeof(DateStruct::DS_STATE));
+
+        sendMsg.m_char = '1';
+        sendMsg.m_int = 3;
+        std::string name = "Liu Guangxuan";
+        memcpy(sendMsg.m_string, &name[0], name.length());
+
+        //消息体长度;
+        int bodyLength = sizeof(DateStruct::DS_STATE);
+
+        header.uhMessageLength = sizeof(header) + bodyLength;
+
+        //将消息头拷贝到buffer中;
+        memcpy(write_data_, &header, sizeof(header));
+
+        //将消息体拷贝到buffer中;
+        memcpy(write_data_ + sizeof(header), &sendMsg.m_char, sizeof(char));
+        memcpy(write_data_ + sizeof(header) + sizeof(char), &sendMsg.m_int, sizeof(int));
+        memcpy(write_data_ + sizeof(header) + sizeof(char) + sizeof(int), &sendMsg.m_string, 100);
+    }
+
+    void deserialization() {
+
+        //消息头;
+        SOCKET_MESSAGE_HEADER header;
+        memset(&header, 0, sizeof(header));
+
+        //消息体;
+        DateStruct::DS_STATE sendMsg;
+        memset(&sendMsg, 0, sizeof(DateStruct::DS_STATE));
+
+        memcpy(&header, read_data_, sizeof(header));
+
+        memcpy(&sendMsg.m_char,read_data_ + sizeof(header),sizeof(char));
+        memcpy(&sendMsg.m_int,read_data_ + sizeof(header) + sizeof(char),sizeof(int));
+        memcpy(&sendMsg.m_string,read_data_ + sizeof(header)+ sizeof(char) + sizeof(int),100);
+
+        memset(read_data_,0,block_size_);
     }
 
     void start(asio::ip::tcp::resolver::results_type endpoints) {
@@ -100,10 +140,12 @@ private:
             socket_.set_option(no_delay, set_option_err);
 
             start_ = std::chrono::system_clock::now();
-            std::cout << nowTime() << " MaxSize: " << sz << std::endl;
 
             if (!set_option_err) {
                 ++unwritten_count_;
+
+                serialization();
+
                 async_write(socket_, asio::buffer(write_data_, block_size_),
                             asio::bind_executor(strand_,
                                                 make_custom_alloc_handler(write_allocator_,
@@ -128,6 +170,11 @@ private:
             read_data_length_ = length;
             ++unwritten_count_;
             if (unwritten_count_ == 1) {
+
+                deserialization();
+
+                serialization();
+
                 std::swap(read_data_, write_data_);
                 async_write(socket_, asio::buffer(write_data_, read_data_length_),
                             asio::bind_executor(strand_,
@@ -150,20 +197,10 @@ private:
         if (!err && length > 0) {
             bytes_written_ += length;
 
-
-            if (bytes_written_ > sz)
-            {
-                auto end = std::chrono::system_clock::now();
-
-                auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start_);
-                std::cout << nowTime() <<  " cost time:"
-                     << double(duration.count()) * std::chrono::microseconds::period::num / std::chrono::microseconds::period::den   << "秒" << std::endl;
-
-                stop();
-            }
-
             --unwritten_count_;
             if (unwritten_count_ == 1) {
+                serialization();
+
                 std::swap(read_data_, write_data_);
                 async_write(socket_, asio::buffer(write_data_, read_data_length_),
                             asio::bind_executor(strand_,
