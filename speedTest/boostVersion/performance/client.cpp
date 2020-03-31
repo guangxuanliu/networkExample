@@ -161,6 +161,12 @@ private:
                                                                                                   asio::placeholders::bytes_transferred))));
             }
         }
+        else
+        {
+            std::cout << "Connect failure, Error code: " << err.value()
+                      << " category name: " << err.category().name()
+                      << " Message: " << err.message() << std::endl;
+        }
     }
 
     void handle_read(const asio::error_code &err, size_t length) {
@@ -191,6 +197,12 @@ private:
                                                                                                   asio::placeholders::bytes_transferred))));
             }
         }
+        else
+        {
+            std::cout << "Read failure, Error code: " << err.value()
+            << " category name: " << err.category().name()
+            << " Message: " << err.message() << std::endl;
+        }
     }
 
     void handle_write(const asio::error_code &err, size_t length) {
@@ -216,6 +228,12 @@ private:
                                                                                                   asio::placeholders::error,
                                                                                                   asio::placeholders::bytes_transferred))));
             }
+        }
+        else
+        {
+            std::cout << "Write failure, Error code: " << err.value()
+                      << " category name: " << err.category().name()
+                      << " Message: " << err.message() << std::endl;
         }
     }
 

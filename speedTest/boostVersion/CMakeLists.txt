@@ -3,7 +3,7 @@ project(speedTest)
 
 set(CMAKE_CXX_STANDARD 11)
 
-include_directories("./include")
+include_directories("../include")
 
 add_executable(server performance/server.cpp)
 target_link_libraries(server pthread)
