@@ -103,7 +103,7 @@ private:
 
 };
 
-int main(int argc, char* argv[])
+int main1(int argc, char* argv[])
 {
 	//size of the data
 	for (int sz = 1; sz <= 512; sz*=2)
