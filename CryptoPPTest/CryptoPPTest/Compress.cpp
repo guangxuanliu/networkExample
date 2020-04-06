@@ -7,6 +7,7 @@ using namespace std::chrono;
 #include "cryptlib.h"
 #include "filters.h"
 #include "gzip.h"
+#include <snappy.h>
 using namespace CryptoPP;
 
 class Compress
@@ -57,12 +58,50 @@ private:
 };
 
 
+class Sna
+{
+public:
+	Sna(string &data) :data_(data)
+	{
+	}
+
+	void compress()
+	{
+		auto start = high_resolution_clock::now();
+		snappy::Compress(data_.data(), data_.size(), &compressed_);
+
+		auto end = high_resolution_clock::now();
+		cout << "compress use time: " << duration_cast<microseconds>(end - start).count() << " microseconds" << endl;
+	}
+
+	void unCompress()
+	{
+		auto start = high_resolution_clock::now();
+		snappy::Uncompress(compressed_.data(),compressed_.size(),&recoverd_);
+		auto end = high_resolution_clock::now();
+		cout << "unCompress use time: " << duration_cast<microseconds>(end - start).count() << " microseconds" << endl;
+	}
+
+	bool check()
+	{
+		return !data_.compare(recoverd_) ? true : false;
+	}
+
+	double ratio()
+	{
+		int temp = int(data_.length() - compressed_.length());
+		double d = (double)temp / data_.length();
+
+		return d * 100;
+	}
+
+private:
+	string data_, compressed_, recoverd_;
+};
+
 
 int main()
 {
-
-
-
 	for (auto& p : experimental::filesystem::directory_iterator("../files"))
 	{
 		ifstream ifs(p.path());
@@ -79,13 +118,26 @@ int main()
 
 		if (task.check())
 		{
-			cout << "ratio: " << task.ratio() << "%" << endl;
+			cout << "Crypto++ ratio: " << task.ratio() << "%" << endl;
 		}
 		else
 		{
-			cout << "error occurd" << endl;
+			cout << "Crypto++ error occurd" << endl;
 		}
 
+
+		Sna sna(data);
+		sna.compress();
+		sna.unCompress();
+		if (sna.check())
+		{
+			cout << "sna ratio: " << sna.ratio() << "%" << endl;
+		}
+		else
+		{
+			cout << "sna error occurd" << endl;
+		}
+		
 	}
 
 	return 0;
